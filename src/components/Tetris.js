@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-//This is helping as when starting a new game, this creates a new game 
+//This is helping when starting a new game, this creates a new game 
 import { createStage } from '..//gameHelpers';
 
 //components
@@ -75,7 +75,7 @@ const move = ({ keyCode }) => {
                 <Display text="Level" />
             </div>
             )}
-            <StartButton onClick={startGame} />
+            <StartButton callback={startGame} />
             </aside>
             </StyledTetris>
         </StyledTetrisWrapper>
