@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 //This is helping when starting a new game, this creates a new game 
-import { createStage } from '..//gameHelpers';
+import { createStage, checkCollision } from '..//gameHelpers';
 
 //components
 import StartButton from './StartButton';
@@ -23,14 +23,21 @@ const Tetris = () => {
     const[gameOver, setGameOver] = useState(false);
 
     const[player, updatePlayerPos, resetPlayer] = usePlayer();
-    const[stage, setStage] = useStage(player);
+    const[stage, setStage] = useStage(player, resetPlayer);
 
 
 console.log('re-render')
 
 const movePlayer = dir => {
-    //this makes the left/right movement
-    updatePlayerPos({ x: dir, y: 0 });
+
+    //this means if we don't collide with anything, we can do the move
+    if(!checkCollision(player, stage, { x: dir, y: 0})) {
+           //this makes the left/right movement
+        updatePlayerPos({ x: dir, y: 0 });
+    }
+ 
+    
+
 
 }
 
@@ -38,11 +45,22 @@ const startGame = () => {
     //reseteverything
     setStage(createStage());
     resetPlayer();
+    setGameOver(false);
 }
 
 const drop = () => {
-    //this updates the players position.
+    if(!checkCollision(player, stage, {x: 0, y:1 })){
+            //this updates the players position.
     updatePlayerPos({ x: 0, y: 1, collided: false })
+    } else{
+        //GameOver
+        if (player.pos.y < 1 ){
+            console.log("gameover");
+            setGameOver(true);
+            setDropTime(null);
+        }
+        updatePlayerPos({x: 0, y: 0, collided: true })
+    }
 }
 
 const dropPlayer = () => {
