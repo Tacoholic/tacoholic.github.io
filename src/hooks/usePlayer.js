@@ -61,7 +61,8 @@ export const usePlayer = () => {
       while(checkCollision(clonedPlayer, stage, { x:0, y: 0})) {
         clonedPlayer.pos.x += offset;
 
-        //this creates the ''back and forth movement'' with a tetromino
+        //this creates the ''back and forth movement'' with a tetromino and prevents it
+        //from 'bleeding' onto another tetromino
         offset = -(offset + (offset > 0 ? 1 :-1 ))
         if(offset > clonedPlayer.tetromino[0].length) {
           rotate(clonedPlayer.tetromino, -dir);
