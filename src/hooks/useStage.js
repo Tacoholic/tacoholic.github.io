@@ -73,7 +73,7 @@ export const useStage = (player, resetPlayer) => {
         };
         setStage(prev => updateStage(prev));
         //these are the dependencies, that we are using inside useEffect and why we are labeling them before.
-    }, [player, resetPlayer, rowsCleared]);
+    }, [player, player.collided, player.pos.x, player.pos.y, player.setStage, resetPlayer]);
 
-    return [stage, setStage];
+    return [stage, setStage, rowsCleared];
 };

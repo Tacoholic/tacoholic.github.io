@@ -8,13 +8,16 @@ import StartButton from './StartButton';
 import Stage from './Stage';
 import Display from './Display';
 
+
 //style components
 import { StyledTetris, StyledTetrisWrapper } from './styles/StyledTetris'; 
 
 //custom hooks
-
+import { useInterval } from '../hooks/useInterval';
 import { usePlayer } from '../hooks/usePlayer';
 import { useStage } from '../hooks/useStage';
+import { useGameStatus } from '../hooks/useGameStatus';
+
 
 //we'll be adding braces because we will be adding more logic to it. 
 
@@ -23,8 +26,9 @@ const Tetris = () => {
     const[gameOver, setGameOver] = useState(false);
 
     const[player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
-    const[stage, setStage] = useStage(player, resetPlayer);
+    const[stage, setStage, rowsCleared] = useStage(player, resetPlayer);
 
+    const[score, setScore, rows, setRows, level, setLevel ] = useGameStatus(rowsCleared);
 
 console.log('re-render')
 
@@ -45,10 +49,21 @@ const startGame = () => {
     //reseteverything
     setStage(createStage());
     resetPlayer();
+    setDropTime(1000);
     setGameOver(false);
+    setScore(0);
+    setLevel(0);
+    setRows(0);
 }
 
 const drop = () => {
+
+    //Increase level when player has inncreased ten rows 
+    if (rows > (level + 1) * 10){
+        setLevel(prev => prev + 1 );
+        //Also increase speed 
+        setDropTime(1000 / (level + 1) + 200);
+    }
     if(!checkCollision(player, stage, {x: 0, y:1 })){
             //this updates the players position.
     updatePlayerPos({ x: 0, y: 1, collided: false })
@@ -63,7 +78,21 @@ const drop = () => {
     }
 }
 
+const keyUp = ({ keyCode }) => {
+
+    console.log("interval on")
+    if (!gameOver) {
+        if (keyCode === 40) {
+            setDropTime(1000 / (level + 1) + 200);
+        }
+    }
+};
+
 const dropPlayer = () => {
+    console.log("interval off")
+    //adding setDrop Timehelps with stopping the interval when the player moves the down key on the keyboard
+    //we also need to activate it when the player releases the downkey. As a result, a new function keyup is created. 
+    setDropTime(null);
     drop();
 }
 
@@ -80,9 +109,20 @@ const move = ({ keyCode }) => {
             playerRotate(stage, 1);
         }
     }
-}
-    return(
-        <StyledTetrisWrapper role="button" tabIndex="0" onKeyDown={e => move(e)}>
+} 
+
+//we'll need to call the drop function because it makes the tetrominos drop 
+useInterval(() => {
+    drop()
+
+}, dropTime)
+return(
+        <StyledTetrisWrapper 
+            role="button" 
+            tabIndex="0" 
+            onKeyDown={e => move(e)} 
+            onKeyUp={keyUp}
+            >
             <StyledTetris>
             <Stage stage={stage} />
             <aside>
@@ -90,9 +130,9 @@ const move = ({ keyCode }) => {
                 <Display gameOver={gameOver} text="Game Over" />
             ) : (
             <div>
-                <Display text="Score" />
-                <Display text="Rows" />
-                <Display text="Level" />
+                <Display text={`Score: ${score}`}/>
+                <Display text={`Rows:  ${rows}`}/>
+                <Display text={`Level: ${level}`}/>
             </div>
             )}
             <StartButton callback={startGame} />
