@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 //This is helping when starting a new game, this creates a new game 
 import { createStage, checkCollision } from '..//gameHelpers';
 
@@ -45,6 +46,7 @@ const movePlayer = dir => {
 
 }
 
+
 const startGame = () => {
     //reseteverything
     setStage(createStage());
@@ -57,7 +59,12 @@ const startGame = () => {
 }
 
 const drop = () => {
+    
+    var myRequest = new Request('https://tetrisreact-484ac.firebaseapp.com/hello');
 
+    fetch(myRequest).then(function(response) {
+        console.log(response.status); // returns 200
+  });
     //Increase level when player has inncreased ten rows 
     if (rows > (level + 1) * 10){
         setLevel(prev => prev + 1 );
@@ -141,5 +148,7 @@ return(
         </StyledTetrisWrapper>
     )
 }
+
+
 
 export default Tetris;

@@ -9,7 +9,7 @@ import { STAGE_WIDTH, checkCollision } from '../gameHelpers';
     //const player = playerState[0]
     //const setPlayer = playerState[1]
 
-//instead we can use what's below on lines 14    
+//instead we can use what's below    
 export const usePlayer = () => {
   const [player, setPlayer] = useState({
     pos: { x: 0, y: 0 },
@@ -29,6 +29,8 @@ export const usePlayer = () => {
         collided,
       }))
     }
+
+    
 
     //You could actually include both rotate and playerRotate in the same function,
     //but it's best not to because at the end of the day, they will be doing seperate functions. 
